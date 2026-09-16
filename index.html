@@ -5,155 +5,153 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>CPO Dashboard</title>
+  <title>Helvetia Existing CPO</title>
 
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f3f4f6;
       margin: 0;
-      padding: 30px;
+      padding: 25px;
       color: #1f2937;
     }
 
     .main {
-      max-width: 1100px;
+      max-width: 1400px;
       margin: auto;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 25px;
     }
 
     .card {
       background: white;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.07);
       margin-bottom: 20px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
     }
 
     label {
       display: block;
+      font-size: 13px;
       font-weight: bold;
-      margin-bottom: 8px;
+      color: #4b5563;
+      margin-bottom: 6px;
     }
 
-    input[type="file"] {
-      width: 100%;
+    input {
       box-sizing: border-box;
-      padding: 12px;
+      width: 100%;
+      padding: 10px;
       border: 1px solid #d1d5db;
-      border-radius: 8px;
-      background: white;
+      border-radius: 7px;
+      font-size: 15px;
     }
-
-    /* TABS */
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .tab-button {
-      padding: 11px 18px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      background: white;
-      cursor: pointer;
-      font-weight: bold;
-      color: #374151;
-    }
-
-    .tab-button:hover {
-      background: #f3f4f6;
-    }
-
-    .tab-button.active {
-      background: #2563eb;
-      color: white;
-      border-color: #2563eb;
-    }
-
-    /* SUMMARY */
 
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
     }
 
-    .summary-box {
-      padding: 18px;
-      background: #f0f9ff;
+    .metric {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
       border-radius: 10px;
+      padding: 15px;
     }
 
-    .summary-title {
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .big {
-      font-size: 28px;
-      font-weight: bold;
-      margin-top: 6px;
-    }
-
-    .small {
-      color: #6b7280;
-      margin-top: 6px;
+    .metric-title {
       font-size: 13px;
-    }
-
-    .formula {
-      margin-top: 15px;
-      padding: 12px;
-      background: #f9fafb;
-      border-radius: 8px;
       color: #6b7280;
-      font-size: 14px;
     }
 
-    /* TABLE */
+    .metric-value {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .good {
+      background: #ecfdf5;
+    }
+
+    .warning {
+      background: #fffbeb;
+    }
+
+    .bad {
+      background: #fef2f2;
+    }
+
+    .revenue-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .revenue-table td,
+    .revenue-table th {
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
     .table-wrapper {
       overflow-x: auto;
     }
 
-    table {
+    table.agent-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      min-width: 1500px;
+      font-size: 13px;
     }
 
-    th {
-      text-align: left;
+    .agent-table th {
       background: #f3f4f6;
-      padding: 12px;
+      padding: 9px;
       border-bottom: 2px solid #d1d5db;
+      white-space: nowrap;
     }
 
-    td {
-      padding: 12px;
+    .agent-table td {
+      padding: 9px;
       border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
     }
 
-    td.number,
-    th.number {
+    .number {
       text-align: right;
     }
 
     .error {
-      margin-top: 20px;
-      padding: 15px;
       background: #fef2f2;
       color: #991b1b;
+      padding: 15px;
       border-radius: 8px;
+      margin-top: 15px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .project-list {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -163,93 +161,290 @@
 
 <div class="main">
 
-  <h1>CPO Dashboard</h1>
+  <h1>Helvetia Existing</h1>
+
+  <div class="subtitle">
+    CPO projekta rezultāti
+  </div>
 
 
-  <!-- FILE UPLOAD -->
+  <!-- REPORT -->
 
   <div class="card">
 
-    <label>Izvēlies VCC TXT / CSV atskaiti</label>
+    <label>VCC User Based Statistics</label>
 
     <input
       type="file"
-      id="csvFile"
-      accept=".csv,.txt"
+      id="reportFile"
+      accept=".txt,.csv"
     >
 
     <div id="error"></div>
 
-  </div>
-
-
-  <!-- PROJECT TABS -->
-
-  <div id="tabs" class="tabs"></div>
-
-
-  <!-- PROJECT SUMMARY -->
-
-  <div
-    class="card"
-    id="projectCard"
-    style="display:none;"
-  >
-
-    <h2 id="projectTitle"></h2>
-
-    <div id="summary"></div>
+    <div
+      id="projectsFound"
+      class="project-list">
+    </div>
 
   </div>
 
 
-  <!-- AGENT TABLE -->
+  <!-- CONFIG -->
+
+  <div class="card">
+
+    <h2>Projekta uzstādījumi</h2>
+
+    <div class="input-grid">
+
+      <div>
+        <label>Samaksa par Agent Commission (€)</label>
+        <input
+          id="priceCommission"
+          type="number"
+          value="6.30"
+          step="0.01"
+        >
+      </div>
+
+      <div>
+        <label>Ienākumu likmes mērķis (€/h)</label>
+        <input
+          id="incomeTarget"
+          type="number"
+          value="21.51"
+          step="0.01"
+        >
+      </div>
+
+      <div>
+        <label>Plānotais projekta budžets (€)</label>
+        <input
+          id="plannedBudget"
+          type="number"
+          value="15233.99"
+          step="0.01"
+        >
+      </div>
+
+      <div>
+        <label>Plānotās stundas</label>
+        <input
+          id="plannedHours"
+          type="number"
+          value="708.23"
+          step="0.01"
+        >
+      </div>
+
+      <div>
+        <label>Ārpussistēmas stundas</label>
+        <input
+          id="externalHours"
+          type="number"
+          value="0"
+          step="0.01"
+        >
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- EXTRA REVENUE -->
+
+  <div class="card">
+
+    <h2>Papildu ieņēmumi</h2>
+
+    <div class="input-grid">
+
+      <div>
+        <label>TIPS Individual skaits (€1.00)</label>
+        <input
+          id="tipsCount"
+          type="number"
+          value="0"
+        >
+      </div>
+
+      <div>
+        <label>GDPR piekrišanu skaits (€0.45)</label>
+        <input
+          id="gdprCount"
+          type="number"
+          value="0"
+        >
+      </div>
+
+      <div>
+        <label>Tulkojumu skaits (€10.00)</label>
+        <input
+          id="translationCount"
+          type="number"
+          value="0"
+        >
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- AC KPI -->
 
   <div
-    class="card"
-    id="agentCard"
-    style="display:none;"
-  >
+    id="dashboard"
+    class="hidden">
 
-    <h2>Aģentu rezultāti</h2>
+    <div class="card">
 
-    <div class="table-wrapper">
+      <h2>AC rādītāji</h2>
 
-      <table>
+      <div
+        class="summary-grid"
+        id="acMetrics">
+      </div>
+
+    </div>
+
+
+    <!-- REVENUE -->
+
+    <div class="card">
+
+      <h2>Klients maksā</h2>
+
+      <table class="revenue-table">
 
         <thead>
 
           <tr>
-
-            <th>
-              Aģents
-            </th>
-
-            <th class="number">
-              Log Time
-            </th>
-
-            <th class="number" id="resultHeader">
-              Rezultāts
-            </th>
-
-            <th class="number">
-              Budget income
-            </th>
-
-            <th class="number">
-              Ienākumu likme
-            </th>
-
+            <th>Pozīcija</th>
+            <th class="number">Cena</th>
+            <th class="number">Skaits</th>
+            <th class="number">Ieņēmumi</th>
           </tr>
 
         </thead>
 
-
-        <tbody id="agentTable">
-        </tbody>
+        <tbody id="revenueRows"></tbody>
 
       </table>
+
+    </div>
+
+
+    <!-- BU -->
+
+    <div class="card">
+
+      <h2>BU</h2>
+
+      <div
+        class="summary-grid"
+        id="buMetrics">
+      </div>
+
+    </div>
+
+
+    <!-- AGENTS -->
+
+    <div class="card">
+
+      <h2>Aģentu rezultāti</h2>
+
+      <div class="table-wrapper">
+
+        <table class="agent-table">
+
+          <thead>
+
+            <tr>
+
+              <th>Aģents</th>
+
+              <th class="number">
+                Log Time
+              </th>
+
+              <th class="number">
+                Production Time
+              </th>
+
+              <th class="number">
+                Neto Time
+              </th>
+
+              <th class="number">
+                Pause Time
+              </th>
+
+              <th class="number">
+                Apmaksātās pauzes
+              </th>
+
+              <th class="number">
+                Agent Commission
+              </th>
+
+              <th class="number">
+                SPH AC
+              </th>
+
+              <th class="number">
+                Success % Finished
+              </th>
+
+              <th class="number">
+                Success % All
+              </th>
+
+              <th class="number">
+                ACW %
+              </th>
+
+              <th class="number">
+                Agent Efficiency
+              </th>
+
+              <th class="number">
+                Call Efficiency
+              </th>
+
+              <th class="number">
+                Pause %
+              </th>
+
+              <th class="number">
+                AVG Handle
+              </th>
+
+              <th class="number">
+                QM
+              </th>
+
+              <th class="number">
+                Kopējie ienākumi
+              </th>
+
+              <th class="number">
+                Ienākumu likme
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="agentRows">
+          </tbody>
+
+        </table>
+
+      </div>
 
     </div>
 
@@ -260,51 +455,104 @@
 
 <script>
 
-/*
-  ================================
-  PROJECT PRICES
-  ================================
-*/
-
-const EXISTING_PRICE = 6.30;
-
-const BEGIN_FINISHED_PRICE = 2.50;
+let rawData = null;
 
 
-/*
-  Šeit glabāsim visus projektus,
-  ko atrodam atskaitē.
-*/
+/* ============================
+   PRICES
+============================ */
 
-let projectData = {};
+const TIPS_PRICE = 1.00;
+const GDPR_PRICE = 0.45;
+const TRANSLATION_PRICE = 10.00;
 
 
+/* ============================
+   FILE
+============================ */
 
 document
-  .getElementById("csvFile")
-  .addEventListener("change", nolasitFailu);
+  .getElementById("reportFile")
+  .addEventListener("change", readFile);
 
 
+/* Recalculate when manual values change */
 
-function nolasitFailu(event) {
+document
+  .querySelectorAll("input[type='number']")
+  .forEach(input => {
 
-  const file = event.target.files[0];
+    input.addEventListener(
+      "input",
+      () => {
 
-  if (!file) {
-    return;
-  }
+        if (rawData) {
+          calculateDashboard();
+        }
 
-
-  const reader = new FileReader();
-
-
-  reader.onload = function(e) {
-
-    apstradatFailu(
-      e.target.result
+      }
     );
 
-  };
+  });
+
+
+
+function readFile(event) {
+
+  const file =
+    event.target.files[0];
+
+  if (!file) return;
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload =
+    function(e) {
+
+      try {
+
+        rawData =
+          parseReport(
+            e.target.result
+          );
+
+
+        calculateDashboard();
+
+
+        document
+          .getElementById("error")
+          .innerHTML = "";
+
+
+        document
+          .getElementById("dashboard")
+          .classList
+          .remove("hidden");
+
+      }
+
+      catch (error) {
+
+        document
+          .getElementById("dashboard")
+          .classList
+          .add("hidden");
+
+
+        document
+          .getElementById("error")
+          .innerHTML =
+            '<div class="error">' +
+            error.message +
+            '</div>';
+
+      }
+
+    };
 
 
   reader.readAsText(file);
@@ -313,754 +561,1027 @@ function nolasitFailu(event) {
 
 
 
-function apstradatFailu(text) {
+/* ============================
+   PARSE REPORT
+============================ */
 
-  const errorBox =
-    document.getElementById("error");
+function parseReport(text) {
 
-
-  errorBox.innerHTML = "";
-
-
-  try {
-
-    const lines =
-      text
-        .trim()
-        .split(/\r?\n/);
+  const lines =
+    text
+      .trim()
+      .split(/\r?\n/);
 
 
-    if (lines.length < 2) {
+  const headers =
+    lines[0]
+      .split("\t")
+      .map(clean);
+
+
+  const index = {};
+
+
+  headers.forEach(
+    (name, i) => {
+      index[name] = i;
+    }
+  );
+
+
+  const required = [
+
+    "User",
+    "Project",
+    "Log Time (h)",
+    "Production time (h)",
+    "Neto Time (h)",
+    "Pause Time (h)",
+    "Break: Apmaksātās pauzes (h)",
+    "Successful",
+    "Finished",
+    "Agent Commission (Field Based)",
+    "Success % (finished)",
+    "Success % (all contacts)",
+    "After call work % (OB calls)",
+    "Agent efficiency % (call time, pre and after work vs logg)",
+    "Call time efficiency % (call time vs neto)",
+    "Pause Time %",
+    "AVG handle time (min)",
+    "QM Assessment Percentage"
+
+  ];
+
+
+  required.forEach(column => {
+
+    if (index[column] === undefined) {
 
       throw new Error(
-        "Failā nav pietiekami daudz datu."
+        "Reportā nav kolonnas: " +
+        column
       );
 
     }
 
+  });
 
-    const headers =
-      lines[0]
+
+
+  const rows = [];
+
+  const projects = new Set();
+
+
+  for (
+    let i = 1;
+    i < lines.length;
+    i++
+  ) {
+
+    const columns =
+      lines[i]
         .split("\t")
-        .map(cleanValue);
+        .map(clean);
 
 
-
-    const userIndex =
-      headers.indexOf("User");
-
-
-    const projectIndex =
-      headers.indexOf("Project");
-
-
-    const logTimeIndex =
-      headers.indexOf("Log Time (h)");
-
-
-    const commissionIndex =
-      headers.indexOf(
-        "Agent Commission (Field Based)"
-      );
-
-
-    const finishedIndex =
-      headers.indexOf("Finished");
-
-
-
-    if (userIndex === -1) {
-
-      throw new Error(
-        'Nav atrasta kolonna "User".'
-      );
-
-    }
-
-
-    if (projectIndex === -1) {
-
-      throw new Error(
-        'Nav atrasta kolonna "Project".'
-      );
-
-    }
-
-
-    if (logTimeIndex === -1) {
-
-      throw new Error(
-        'Nav atrasta kolonna "Log Time (h)".'
-      );
-
-    }
-
-
-    if (commissionIndex === -1) {
-
-      throw new Error(
-        'Nav atrasta kolonna "Agent Commission (Field Based)".'
-      );
-
-    }
-
-
-    if (finishedIndex === -1) {
-
-      throw new Error(
-        'Nav atrasta kolonna "Finished".'
-      );
-
-    }
-
+    const project =
+      columns[
+        index["Project"]
+      ];
 
 
     /*
-      Iztīrām iepriekšējos datus
+      IMPORTANT:
+      Season/year/language can change.
+
+      Anything beginning with
+      Helvetia_Existing_
+      belongs to this dashboard.
     */
 
-    projectData = {};
-
-
-
-    /*
-      ================================
-      READ EVERY REPORT ROW
-      ================================
-    */
-
-
-    for (
-      let i = 1;
-      i < lines.length;
-      i++
+    if (
+      !project ||
+      !project.startsWith(
+        "Helvetia_Existing_"
+      )
     ) {
 
-
-      const columns =
-        lines[i]
-          .split("\t")
-          .map(cleanValue);
-
-
-      if (
-        columns.length <= projectIndex
-      ) {
-
-        continue;
-
-      }
-
-
-
-      const user =
-        columns[userIndex];
-
-
-      const project =
-        columns[projectIndex];
-
-
-
-      if (!project) {
-
-        continue;
-
-      }
-
-
-
-      const logTime =
-        parseNumber(
-          columns[logTimeIndex]
-        );
-
-
-      const commission =
-        parseNumber(
-          columns[commissionIndex]
-        );
-
-
-      const finished =
-        parseNumber(
-          columns[finishedIndex]
-        );
-
-
-
-      /*
-        Ja projekts vēl nav izveidots,
-        izveidojam to.
-      */
-
-      if (!projectData[project]) {
-
-        projectData[project] = {
-
-          logTime: 0,
-
-          commission: 0,
-
-          finished: 0,
-
-          agents: {}
-
-        };
-
-      }
-
-
-
-      /*
-        Kopējie projekta dati
-      */
-
-      projectData[project].logTime +=
-        logTime;
-
-
-      projectData[project].commission +=
-        commission;
-
-
-      projectData[project].finished +=
-        finished;
-
-
-
-      /*
-        Dialer un System neiekļaujam
-        aģentu tabulā.
-      */
-
-      if (
-        user === "Dialer" ||
-        user === "System" ||
-        user === ""
-      ) {
-
-        continue;
-
-      }
-
-
-
-      /*
-        Izveidojam aģentu projektā
-      */
-
-      if (
-        !projectData[project]
-          .agents[user]
-      ) {
-
-        projectData[project]
-          .agents[user] = {
-
-            logTime: 0,
-
-            commission: 0,
-
-            finished: 0
-
-          };
-
-      }
-
-
-
-      projectData[project]
-        .agents[user]
-        .logTime += logTime;
-
-
-      projectData[project]
-        .agents[user]
-        .commission += commission;
-
-
-      projectData[project]
-        .agents[user]
-        .finished += finished;
+      continue;
 
     }
 
 
-
-    izveidotTabs();
-
-  }
-
-  catch (error) {
+    projects.add(project);
 
 
-    document
-      .getElementById("projectCard")
-      .style.display = "none";
+    rows.push({
 
+      user:
+        columns[
+          index["User"]
+        ],
 
-    document
-      .getElementById("agentCard")
-      .style.display = "none";
+      project,
 
+      log:
+        number(
+          columns[
+            index["Log Time (h)"]
+          ]
+        ),
 
-    document
-      .getElementById("tabs")
-      .innerHTML = "";
+      production:
+        number(
+          columns[
+            index[
+              "Production time (h)"
+            ]
+          ]
+        ),
 
+      neto:
+        number(
+          columns[
+            index["Neto Time (h)"]
+          ]
+        ),
 
-    errorBox.innerHTML =
+      pause:
+        number(
+          columns[
+            index["Pause Time (h)"]
+          ]
+        ),
 
-      '<div class="error">' +
+      paidBreak:
+        number(
+          columns[
+            index[
+              "Break: Apmaksātās pauzes (h)"
+            ]
+          ]
+        ),
 
-      "<b>Kļūda:</b> " +
+      successful:
+        number(
+          columns[
+            index["Successful"]
+          ]
+        ),
 
-      error.message +
+      finished:
+        number(
+          columns[
+            index["Finished"]
+          ]
+        ),
 
-      "</div>";
+      commission:
+        number(
+          columns[
+            index[
+              "Agent Commission (Field Based)"
+            ]
+          ]
+        ),
 
-  }
+      successFinished:
+        percent(
+          columns[
+            index[
+              "Success % (finished)"
+            ]
+          ]
+        ),
 
-}
+      successAll:
+        percent(
+          columns[
+            index[
+              "Success % (all contacts)"
+            ]
+          ]
+        ),
 
+      acw:
+        percent(
+          columns[
+            index[
+              "After call work % (OB calls)"
+            ]
+          ]
+        ),
 
+      agentEfficiency:
+        percent(
+          columns[
+            index[
+              "Agent efficiency % (call time, pre and after work vs logg)"
+            ]
+          ]
+        ),
 
-/*
-  ================================
-  CREATE PROJECT TABS
-  ================================
-*/
+      callEfficiency:
+        percent(
+          columns[
+            index[
+              "Call time efficiency % (call time vs neto)"
+            ]
+          ]
+        ),
 
+      pausePercent:
+        percent(
+          columns[
+            index["Pause Time %"]
+          ]
+        ),
 
-function izveidotTabs() {
+      handle:
+        number(
+          columns[
+            index[
+              "AVG handle time (min)"
+            ]
+          ]
+        ),
 
-  const tabs =
-    document.getElementById("tabs");
-
-
-  tabs.innerHTML = "";
-
-
-  const projects =
-    Object.keys(projectData);
-
-
-
-  projects.forEach(
-    (project, index) => {
-
-
-      const button =
-        document.createElement("button");
-
-
-      button.className =
-        "tab-button";
-
-
-      button.textContent =
-        getProjectDisplayName(project);
-
-
-      button.onclick =
-        function() {
-
-
-          document
-            .querySelectorAll(
-              ".tab-button"
-            )
-            .forEach(
-              b =>
-                b.classList
-                  .remove("active")
-            );
-
-
-          button
-            .classList
-            .add("active");
-
-
-          paraditProjektu(
-            project
-          );
-
-        };
-
-
-      tabs.appendChild(button);
-
-
-
-      /*
-        Automātiski atver pirmo projektu
-      */
-
-      if (index === 0) {
-
-        button.click();
-
-      }
+      qm:
+        percent(
+          columns[
+            index[
+              "QM Assessment Percentage"
+            ]
+          ]
+        )
 
     });
 
-}
+  }
 
 
+  if (rows.length === 0) {
 
-/*
-  ================================
-  DISPLAY PROJECT
-  ================================
-*/
-
-
-function paraditProjektu(project) {
-
-  const data =
-    projectData[project];
-
-
-  const projectCard =
-    document.getElementById(
-      "projectCard"
+    throw new Error(
+      "Reportā nav atrasts neviens Helvetia_Existing_ projekts."
     );
 
-
-  const agentCard =
-    document.getElementById(
-      "agentCard"
-    );
-
-
-  projectCard.style.display =
-    "block";
-
-
-  agentCard.style.display =
-    "block";
-
+  }
 
 
   document
     .getElementById(
-      "projectTitle"
+      "projectsFound"
     )
-    .textContent =
-      getProjectDisplayName(project);
+    .innerHTML =
+
+      "<b>Atrastās kampaņas:</b> " +
+
+      Array
+        .from(projects)
+        .join(", ");
+
+
+  return rows;
+
+}
+
+
+
+/* ============================
+   CALCULATE
+============================ */
+
+function calculateDashboard() {
+
+  const rows = rawData;
+
+
+  const priceCommission =
+    value("priceCommission");
+
+
+  const tips =
+    value("tipsCount");
+
+
+  const gdpr =
+    value("gdprCount");
+
+
+  const translations =
+    value("translationCount");
+
+
+  const incomeTarget =
+    value("incomeTarget");
+
+
+  const plannedBudget =
+    value("plannedBudget");
+
+
+  const plannedHours =
+    value("plannedHours");
+
+
+  const externalHours =
+    value("externalHours");
+
+
+
+  let totalLog = 0;
+  let totalProduction = 0;
+  let totalNeto = 0;
+  let totalPause = 0;
+  let totalPaidBreak = 0;
+
+  let totalSuccessful = 0;
+  let totalFinished = 0;
+  let totalCommission = 0;
+
+
+  const agents = {};
+
+
+  rows.forEach(row => {
+
+
+    /*
+      Ignore technical users
+      in personnel statistics.
+    */
+
+    if (
+      row.user === "Dialer" ||
+      row.user === "System"
+    ) {
+
+      return;
+
+    }
+
+
+    totalLog +=
+      row.log;
+
+
+    totalProduction +=
+      row.production;
+
+
+    totalNeto +=
+      row.neto;
+
+
+    totalPause +=
+      row.pause;
+
+
+    totalPaidBreak +=
+      row.paidBreak;
+
+
+    totalSuccessful +=
+      row.successful;
+
+
+    totalFinished +=
+      row.finished;
+
+
+    totalCommission +=
+      row.commission;
+
+
+
+    if (!agents[row.user]) {
+
+      agents[row.user] = {
+        rows: [],
+        log: 0,
+        production: 0,
+        neto: 0,
+        pause: 0,
+        paidBreak: 0,
+        successful: 0,
+        finished: 0,
+        commission: 0
+      };
+
+    }
+
+
+    const a =
+      agents[row.user];
+
+
+    a.rows.push(row);
+
+    a.log += row.log;
+    a.production += row.production;
+    a.neto += row.neto;
+    a.pause += row.pause;
+    a.paidBreak += row.paidBreak;
+    a.successful += row.successful;
+    a.finished += row.finished;
+    a.commission += row.commission;
+
+  });
 
 
 
   /*
-    Nosakām projekta aprēķina veidu
+    PROJECT KPI
   */
 
 
-  const isBegin =
-    project
-      .toLowerCase()
-      .includes("begin_new");
+  const sphCommission =
+
+    totalProduction > 0
+
+      ? totalCommission /
+        totalProduction
+
+      : 0;
 
 
 
-  let budgetIncome;
+  const successFinished =
 
-  let resultValue;
+    totalFinished > 0
 
-  let resultName;
+      ? totalSuccessful /
+        totalFinished *
+        100
 
-  let formulaText;
-
-
-
-  /*
-    BEGIN
-  */
-
-  if (isBegin) {
-
-
-    resultValue =
-      data.finished;
-
-
-    resultName =
-      "Finished";
-
-
-    budgetIncome =
-      data.finished *
-      BEGIN_FINISHED_PRICE;
-
-
-    formulaText =
-      data.finished.toFixed(0) +
-      " Finished × " +
-      BEGIN_FINISHED_PRICE.toFixed(2) +
-      " €";
-
-  }
-
-
-  /*
-    EXISTING
-  */
-
-  else {
-
-
-    resultValue =
-      data.commission;
-
-
-    resultName =
-      "Agent Commission";
-
-
-    budgetIncome =
-      data.commission *
-      EXISTING_PRICE;
-
-
-    formulaText =
-      data.commission.toFixed(0) +
-      " Agent Commission × " +
-      EXISTING_PRICE.toFixed(2) +
-      " €";
-
-  }
+      : 0;
 
 
 
-  /*
-    INCOME RATE
-  */
+  const qm =
+    weightedMetric(
+      rows,
+      "qm"
+    );
 
-  const incomeRate =
-    data.logTime > 0
-      ? budgetIncome /
-        data.logTime
+
+  const agentEfficiency =
+    weightedMetric(
+      rows,
+      "agentEfficiency"
+    );
+
+
+  const callEfficiency =
+    weightedMetric(
+      rows,
+      "callEfficiency"
+    );
+
+
+  const acw =
+    weightedMetric(
+      rows,
+      "acw"
+    );
+
+
+  const pausePercent =
+
+    totalLog > 0
+
+      ? totalPause /
+        totalLog *
+        100
+
       : 0;
 
 
 
   /*
-    SUMMARY CARDS
+    REVENUE
   */
+
+
+  const productionIncome =
+    totalCommission *
+    priceCommission;
+
+
+  const tipsIncome =
+    tips *
+    TIPS_PRICE;
+
+
+  const gdprIncome =
+    gdpr *
+    GDPR_PRICE;
+
+
+  const translationIncome =
+    translations *
+    TRANSLATION_PRICE;
+
+
+  const totalIncome =
+
+    productionIncome +
+    tipsIncome +
+    gdprIncome +
+    translationIncome;
+
+
+  const totalHours =
+    totalLog +
+    externalHours;
+
+
+  const incomeRate =
+
+    totalHours > 0
+
+      ? totalIncome /
+        totalHours
+
+      : 0;
+
+
+  const incomeTargetExecution =
+
+    incomeTarget > 0
+
+      ? incomeRate /
+        incomeTarget *
+        100
+
+      : 0;
+
+
+  const budgetExecution =
+
+    plannedBudget > 0
+
+      ? totalIncome /
+        plannedBudget *
+        100
+
+      : 0;
+
+
+  const hoursExecution =
+
+    plannedHours > 0
+
+      ? totalHours /
+        plannedHours *
+        100
+
+      : 0;
+
+
+
+  /* ============================
+     AC CARDS
+  ============================ */
 
 
   document
-    .getElementById("summary")
+    .getElementById(
+      "acMetrics"
+    )
+    .innerHTML =
+
+      metric(
+        "Stundas",
+        totalLog.toFixed(2) +
+        " h"
+      ) +
+
+      metric(
+        "Sarunu vērtējums mēnesī",
+        qm.toFixed(2) +
+        "%"
+      ) +
+
+      metric(
+        "Zvanīšanas efektivitāte",
+        callEfficiency.toFixed(2) +
+        "%"
+      ) +
+
+      metric(
+        "Projekta pēcapstrāde",
+        acw.toFixed(2) +
+        "%"
+      ) +
+
+      metric(
+        "Paužu laiks projektā",
+        pausePercent.toFixed(2) +
+        "%"
+      ) +
+
+      metric(
+        "SPH (Agent Commission)",
+        sphCommission.toFixed(2)
+      ) +
+
+      metric(
+        "Success % (Finished)",
+        successFinished.toFixed(2) +
+        "%"
+      ) +
+
+      metric(
+        "Agent Commission",
+        totalCommission.toFixed(0)
+      );
+
+
+
+  /* ============================
+     REVENUE TABLE
+  ============================ */
+
+
+  document
+    .getElementById(
+      "revenueRows"
+    )
     .innerHTML = `
 
+      <tr>
 
-      <div class="summary-grid">
+        <td>
+          Samaksa par pārdoto
+        </td>
 
+        <td class="number">
+          ${money(priceCommission)}
+        </td>
 
-        <div class="summary-box">
+        <td class="number">
+          ${totalCommission.toFixed(0)}
+        </td>
 
-          <div class="summary-title">
-            Log Time
-          </div>
+        <td class="number">
+          <b>${money(productionIncome)}</b>
+        </td>
 
-          <div class="big">
-            ${data.logTime.toFixed(2)} h
-          </div>
-
-        </div>
-
-
-
-        <div class="summary-box">
-
-          <div class="summary-title">
-            ${resultName}
-          </div>
-
-          <div class="big">
-            ${resultValue.toFixed(0)}
-          </div>
-
-        </div>
+      </tr>
 
 
+      <tr>
 
-        <div class="summary-box">
+        <td>
+          TIPS par individual
+        </td>
 
-          <div class="summary-title">
-            Budget income
-          </div>
+        <td class="number">
+          ${money(TIPS_PRICE)}
+        </td>
 
-          <div class="big">
-            ${budgetIncome.toFixed(2)} €
-          </div>
+        <td class="number">
+          ${tips}
+        </td>
 
-        </div>
+        <td class="number">
+          ${money(tipsIncome)}
+        </td>
 
-
-
-        <div class="summary-box">
-
-          <div class="summary-title">
-            Ienākumu likme
-          </div>
-
-          <div class="big">
-            ${incomeRate.toFixed(2)} €/h
-          </div>
-
-        </div>
+      </tr>
 
 
-      </div>
+      <tr>
+
+        <td>
+          GDPR piekrišana
+        </td>
+
+        <td class="number">
+          ${money(GDPR_PRICE)}
+        </td>
+
+        <td class="number">
+          ${gdpr}
+        </td>
+
+        <td class="number">
+          ${money(gdprIncome)}
+        </td>
+
+      </tr>
 
 
-      <div class="formula">
+      <tr>
 
-        Aprēķins:
-        ${formulaText}
+        <td>
+          Tulkojumi
+        </td>
 
-      </div>
+        <td class="number">
+          ${money(TRANSLATION_PRICE)}
+        </td>
 
-    `;
+        <td class="number">
+          ${translations}
+        </td>
+
+        <td class="number">
+          ${money(translationIncome)}
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td colspan="3">
+          <b>Kopējie ienākumi</b>
+        </td>
+
+        <td class="number">
+          <b>${money(totalIncome)}</b>
+        </td>
+
+      </tr>
+
+  `;
 
 
 
-  /*
-    AGENT TABLE
-  */
+  /* ============================
+     BU CARDS
+  ============================ */
 
 
-  const resultHeader =
+  document
+    .getElementById(
+      "buMetrics"
+    )
+    .innerHTML =
+
+      metric(
+        "Kopējie ienākumi",
+        money(totalIncome)
+      ) +
+
+      metric(
+        "Ieņēmumi par produkciju",
+        money(productionIncome)
+      ) +
+
+      metricStatus(
+        "Ienākumu likme projektā",
+        money(incomeRate) + "/h",
+        incomeRate,
+        incomeTarget
+      ) +
+
+      metric(
+        "Ienākumu likmes mērķis",
+        money(incomeTarget) + "/h"
+      ) +
+
+      metric(
+        "Ienākuma likmes izpilde",
+        incomeTargetExecution.toFixed(0) +
+        "%"
+      ) +
+
+      metric(
+        "Plānotais projekta budžets",
+        money(plannedBudget)
+      ) +
+
+      metric(
+        "Budžeta izpilde",
+        budgetExecution.toFixed(0) +
+        "%"
+      ) +
+
+      metric(
+        "Plānotās stundas",
+        plannedHours.toFixed(2) +
+        " h"
+      ) +
+
+      metric(
+        "Stundu izpilde",
+        hoursExecution.toFixed(0) +
+        "%"
+      ) +
+
+      metric(
+        "Ārpussistēmas stundas",
+        externalHours.toFixed(2) +
+        " h"
+      );
+
+
+
+  /* ============================
+     AGENT TABLE
+  ============================ */
+
+
+  const agentRows =
     document.getElementById(
-      "resultHeader"
+      "agentRows"
     );
 
 
-  resultHeader.textContent =
-    resultName;
-
-
-
-  const agentTable =
-    document.getElementById(
-      "agentTable"
-    );
-
-
-  agentTable.innerHTML = "";
-
+  agentRows.innerHTML = "";
 
 
   Object
-    .entries(data.agents)
+    .entries(agents)
 
     .sort(
       (a, b) =>
-        b[1].logTime -
-        a[1].logTime
+        b[1].log -
+        a[1].log
     )
 
     .forEach(
-      ([name, agent]) => {
+      ([name, a]) => {
 
 
-        let agentResult;
-
-        let agentIncome;
-
-
-        /*
-          BEGIN AGENT
-        */
-
-        if (isBegin) {
+        const income =
+          a.commission *
+          priceCommission;
 
 
-          agentResult =
-            agent.finished;
+        const rate =
 
+          a.log > 0
 
-          agentIncome =
-            agent.finished *
-            BEGIN_FINISHED_PRICE;
-
-        }
-
-
-        /*
-          EXISTING AGENT
-        */
-
-        else {
-
-
-          agentResult =
-            agent.commission;
-
-
-          agentIncome =
-            agent.commission *
-            EXISTING_PRICE;
-
-        }
-
-
-
-        const agentIncomeRate =
-
-          agent.logTime > 0
-
-            ? agentIncome /
-              agent.logTime
+            ? income /
+              a.log
 
             : 0;
 
 
+        const sph =
 
-        const row =
+          a.production > 0
+
+            ? a.commission /
+              a.production
+
+            : 0;
+
+
+        const successFinishedAgent =
+
+          a.finished > 0
+
+            ? a.successful /
+              a.finished *
+              100
+
+            : 0;
+
+
+        const successAllAgent =
+          weightedMetric(
+            a.rows,
+            "successAll"
+          );
+
+
+        const acwAgent =
+          weightedMetric(
+            a.rows,
+            "acw"
+          );
+
+
+        const agentEfficiencyAgent =
+          weightedMetric(
+            a.rows,
+            "agentEfficiency"
+          );
+
+
+        const callEfficiencyAgent =
+          weightedMetric(
+            a.rows,
+            "callEfficiency"
+          );
+
+
+        const pauseAgent =
+
+          a.log > 0
+
+            ? a.pause /
+              a.log *
+              100
+
+            : 0;
+
+
+        const handleAgent =
+          weightedMetric(
+            a.rows,
+            "handle"
+          );
+
+
+        const qmAgent =
+          weightedMetric(
+            a.rows,
+            "qm"
+          );
+
+
+
+        const tr =
           document
             .createElement("tr");
 
 
-
-        row.innerHTML = `
-
+        tr.innerHTML = `
 
           <td>
-            ${name}
+            <b>${name}</b>
           </td>
 
-
           <td class="number">
-            ${agent.logTime.toFixed(2)} h
+            ${a.log.toFixed(2)}
           </td>
 
-
           <td class="number">
-            ${agentResult.toFixed(0)}
+            ${a.production.toFixed(2)}
           </td>
 
-
           <td class="number">
-            ${agentIncome.toFixed(2)} €
+            ${a.neto.toFixed(2)}
           </td>
 
+          <td class="number">
+            ${a.pause.toFixed(2)}
+          </td>
 
           <td class="number">
-            <b>
-              ${agentIncomeRate.toFixed(2)} €/h
-            </b>
+            ${a.paidBreak.toFixed(2)}
+          </td>
+
+          <td class="number">
+            ${a.commission.toFixed(0)}
+          </td>
+
+          <td class="number">
+            ${sph.toFixed(2)}
+          </td>
+
+          <td class="number">
+            ${successFinishedAgent.toFixed(2)}%
+          </td>
+
+          <td class="number">
+            ${successAllAgent.toFixed(2)}%
+          </td>
+
+          <td class="number">
+            ${acwAgent.toFixed(2)}%
+          </td>
+
+          <td class="number">
+            ${agentEfficiencyAgent.toFixed(2)}%
+          </td>
+
+          <td class="number">
+            ${callEfficiencyAgent.toFixed(2)}%
+          </td>
+
+          <td class="number">
+            ${pauseAgent.toFixed(2)}%
+          </td>
+
+          <td class="number">
+            ${handleAgent.toFixed(2)}
+          </td>
+
+          <td class="number">
+            ${qmAgent.toFixed(2)}%
+          </td>
+
+          <td class="number">
+            ${money(income)}
+          </td>
+
+          <td class="number">
+            <b>${money(rate)}/h</b>
           </td>
 
         `;
 
 
-
-        agentTable
-          .appendChild(row);
+        agentRows.appendChild(tr);
 
       });
 
@@ -1068,79 +1589,195 @@ function paraditProjektu(project) {
 
 
 
-/*
-  ================================
-  PROJECT DISPLAY NAME
-  ================================
-*/
+/* ============================
+   HELPERS
+============================ */
 
 
-function getProjectDisplayName(project) {
+function weightedMetric(
+  rows,
+  property
+) {
+
+  let totalWeight = 0;
+  let total = 0;
 
 
-  if (
-    project ===
-    "Helvetia_Existing_2026_Rudens_LV"
-  ) {
+  rows.forEach(row => {
 
-    return "Existing LV";
-
-  }
-
-
-  if (
-    project ===
-    "Helvetia_Existing_2026_Rudens_RU"
-  ) {
-
-    return "Existing RU";
-
-  }
+    if (
+      row.user === "Dialer" ||
+      row.user === "System"
+    ) {
+      return;
+    }
 
 
-  if (
-    project === "Begin_NEW"
-  ) {
-
-    return "Begin NEW";
-
-  }
+    if (row.log <= 0) {
+      return;
+    }
 
 
-  return project;
+    total +=
+      row[property] *
+      row.log;
+
+
+    totalWeight +=
+      row.log;
+
+  });
+
+
+  return totalWeight > 0
+    ? total / totalWeight
+    : 0;
 
 }
 
 
 
-/*
-  ================================
-  HELPERS
-  ================================
-*/
+function metric(
+  title,
+  value
+) {
+
+  return `
+
+    <div class="metric">
+
+      <div class="metric-title">
+        ${title}
+      </div>
+
+      <div class="metric-value">
+        ${value}
+      </div>
+
+    </div>
+
+  `;
+
+}
 
 
-function parseNumber(value) {
 
-  const number =
+function metricStatus(
+  title,
+  displayValue,
+  value,
+  target
+) {
+
+  let status = "";
+
+
+  if (target > 0) {
+
+    if (value >= target) {
+
+      status = "good";
+
+    }
+
+    else if (
+      value >=
+      target * 0.9
+    ) {
+
+      status = "warning";
+
+    }
+
+    else {
+
+      status = "bad";
+
+    }
+
+  }
+
+
+  return `
+
+    <div class="metric ${status}">
+
+      <div class="metric-title">
+        ${title}
+      </div>
+
+      <div class="metric-value">
+        ${displayValue}
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+
+function money(value) {
+
+  return Number(value)
+    .toLocaleString(
+      "lv-LV",
+      {
+        style: "currency",
+        currency: "EUR"
+      }
+    );
+
+}
+
+
+
+function value(id) {
+
+  return (
+    Number(
+      document
+        .getElementById(id)
+        .value
+    ) || 0
+  );
+
+}
+
+
+
+function number(value) {
+
+  const n =
     Number(
       String(value || "")
         .replace(",", ".")
-        .replace("%", "")
     );
 
 
-  return isNaN(number)
+  return isNaN(n)
     ? 0
-    : number;
+    : n;
 
 }
 
 
 
-function cleanValue(value) {
+function percent(value) {
 
-  return value
+  return number(
+    String(value || "")
+      .replace("%", "")
+  );
+
+}
+
+
+
+function clean(value) {
+
+  return String(value || "")
     .trim()
     .replace(/^"|"$/g, "");
 

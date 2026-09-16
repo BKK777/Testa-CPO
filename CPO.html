@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="lv">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>CPO Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 30px;
+      color: #1f2937;
+    }
+
+    .main {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+    }
+
+    /* TABS */
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .tab-button {
+      padding: 11px 18px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-weight: bold;
+      color: #374151;
+    }
+
+    .tab-button:hover {
+      background: #f3f4f6;
+    }
+
+    .tab-button.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
+    /* SUMMARY */
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .summary-box {
+      padding: 18px;
+      background: #f0f9ff;
+      border-radius: 10px;
+    }
+
+    .summary-title {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .big {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 6px;
+    }
+
+    .small {
+      color: #6b7280;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    .formula {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    /* TABLE */
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th {
+      text-align: left;
+      background: #f3f4f6;
+      padding: 12px;
+      border-bottom: 2px solid #d1d5db;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    td.number,
+    th.number {
+      text-align: right;
+    }
+
+    .error {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fef2f2;
+      color: #991b1b;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+
+<body>
+
+<div class="main">
+
+  <h1>CPO Dashboard</h1>
+
+
+  <!-- FILE UPLOAD -->
+
+  <div class="card">
+
+    <label>Izvēlies VCC TXT / CSV atskaiti</label>
+
+    <input
+      type="file"
+      id="csvFile"
+      accept=".csv,.txt"
+    >
+
+    <div id="error"></div>
+
+  </div>
+
+
+  <!-- PROJECT TABS -->
+
+  <div id="tabs" class="tabs"></div>
+
+
+  <!-- PROJECT SUMMARY -->
+
+  <div
+    class="card"
+    id="projectCard"
+    style="display:none;"
+  >
+
+    <h2 id="projectTitle"></h2>
+
+    <div id="summary"></div>
+
+  </div>
+
+
+  <!-- AGENT TABLE -->
+
+  <div
+    class="card"
+    id="agentCard"
+    style="display:none;"
+  >
+
+    <h2>Aģentu rezultāti</h2>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Aģents
+            </th>
+
+            <th class="number">
+              Log Time
+            </th>
+
+            <th class="number" id="resultHeader">
+              Rezultāts
+            </th>
+
+            <th class="number">
+              Budget income
+            </th>
+
+            <th class="number">
+              Ienākumu likme
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody id="agentTable">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/*
+  ================================
+  PROJECT PRICES
+  ================================
+*/
+
+const EXISTING_PRICE = 6.30;
+
+const BEGIN_FINISHED_PRICE = 2.50;
+
+
+/*
+  Šeit glabāsim visus projektus,
+  ko atrodam atskaitē.
+*/
+
+let projectData = {};
+
+
+
+document
+  .getElementById("csvFile")
+  .addEventListener("change", nolasitFailu);
+
+
+
+function nolasitFailu(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) {
+    return;
+  }
+
+
+  const reader = new FileReader();
+
+
+  reader.onload = function(e) {
+
+    apstradatFailu(
+      e.target.result
+    );
+
+  };
+
+
+  reader.readAsText(file);
+
+}
+
+
+
+function apstradatFailu(text) {
+
+  const errorBox =
+    document.getElementById("error");
+
+
+  errorBox.innerHTML = "";
+
+
+  try {
+
+    const lines =
+      text
+        .trim()
+        .split(/\r?\n/);
+
+
+    if (lines.length < 2) {
+
+      throw new Error(
+        "Failā nav pietiekami daudz datu."
+      );
+
+    }
+
+
+    const headers =
+      lines[0]
+        .split("\t")
+        .map(cleanValue);
+
+
+
+    const userIndex =
+      headers.indexOf("User");
+
+
+    const projectIndex =
+      headers.indexOf("Project");
+
+
+    const logTimeIndex =
+      headers.indexOf("Log Time (h)");
+
+
+    const commissionIndex =
+      headers.indexOf(
+        "Agent Commission (Field Based)"
+      );
+
+
+    const finishedIndex =
+      headers.indexOf("Finished");
+
+
+
+    if (userIndex === -1) {
+
+      throw new Error(
+        'Nav atrasta kolonna "User".'
+      );
+
+    }
+
+
+    if (projectIndex === -1) {
+
+      throw new Error(
+        'Nav atrasta kolonna "Project".'
+      );
+
+    }
+
+
+    if (logTimeIndex === -1) {
+
+      throw new Error(
+        'Nav atrasta kolonna "Log Time (h)".'
+      );
+
+    }
+
+
+    if (commissionIndex === -1) {
+
+      throw new Error(
+        'Nav atrasta kolonna "Agent Commission (Field Based)".'
+      );
+
+    }
+
+
+    if (finishedIndex === -1) {
+
+      throw new Error(
+        'Nav atrasta kolonna "Finished".'
+      );
+
+    }
+
+
+
+    /*
+      Iztīrām iepriekšējos datus
+    */
+
+    projectData = {};
+
+
+
+    /*
+      ================================
+      READ EVERY REPORT ROW
+      ================================
+    */
+
+
+    for (
+      let i = 1;
+      i < lines.length;
+      i++
+    ) {
+
+
+      const columns =
+        lines[i]
+          .split("\t")
+          .map(cleanValue);
+
+
+      if (
+        columns.length <= projectIndex
+      ) {
+
+        continue;
+
+      }
+
+
+
+      const user =
+        columns[userIndex];
+
+
+      const project =
+        columns[projectIndex];
+
+
+
+      if (!project) {
+
+        continue;
+
+      }
+
+
+
+      const logTime =
+        parseNumber(
+          columns[logTimeIndex]
+        );
+
+
+      const commission =
+        parseNumber(
+          columns[commissionIndex]
+        );
+
+
+      const finished =
+        parseNumber(
+          columns[finishedIndex]
+        );
+
+
+
+      /*
+        Ja projekts vēl nav izveidots,
+        izveidojam to.
+      */
+
+      if (!projectData[project]) {
+
+        projectData[project] = {
+
+          logTime: 0,
+
+          commission: 0,
+
+          finished: 0,
+
+          agents: {}
+
+        };
+
+      }
+
+
+
+      /*
+        Kopējie projekta dati
+      */
+
+      projectData[project].logTime +=
+        logTime;
+
+
+      projectData[project].commission +=
+        commission;
+
+
+      projectData[project].finished +=
+        finished;
+
+
+
+      /*
+        Dialer un System neiekļaujam
+        aģentu tabulā.
+      */
+
+      if (
+        user === "Dialer" ||
+        user === "System" ||
+        user === ""
+      ) {
+
+        continue;
+
+      }
+
+
+
+      /*
+        Izveidojam aģentu projektā
+      */
+
+      if (
+        !projectData[project]
+          .agents[user]
+      ) {
+
+        projectData[project]
+          .agents[user] = {
+
+            logTime: 0,
+
+            commission: 0,
+
+            finished: 0
+
+          };
+
+      }
+
+
+
+      projectData[project]
+        .agents[user]
+        .logTime += logTime;
+
+
+      projectData[project]
+        .agents[user]
+        .commission += commission;
+
+
+      projectData[project]
+        .agents[user]
+        .finished += finished;
+
+    }
+
+
+
+    izveidotTabs();
+
+  }
+
+  catch (error) {
+
+
+    document
+      .getElementById("projectCard")
+      .style.display = "none";
+
+
+    document
+      .getElementById("agentCard")
+      .style.display = "none";
+
+
+    document
+      .getElementById("tabs")
+      .innerHTML = "";
+
+
+    errorBox.innerHTML =
+
+      '<div class="error">' +
+
+      "<b>Kļūda:</b> " +
+
+      error.message +
+
+      "</div>";
+
+  }
+
+}
+
+
+
+/*
+  ================================
+  CREATE PROJECT TABS
+  ================================
+*/
+
+
+function izveidotTabs() {
+
+  const tabs =
+    document.getElementById("tabs");
+
+
+  tabs.innerHTML = "";
+
+
+  const projects =
+    Object.keys(projectData);
+
+
+
+  projects.forEach(
+    (project, index) => {
+
+
+      const button =
+        document.createElement("button");
+
+
+      button.className =
+        "tab-button";
+
+
+      button.textContent =
+        getProjectDisplayName(project);
+
+
+      button.onclick =
+        function() {
+
+
+          document
+            .querySelectorAll(
+              ".tab-button"
+            )
+            .forEach(
+              b =>
+                b.classList
+                  .remove("active")
+            );
+
+
+          button
+            .classList
+            .add("active");
+
+
+          paraditProjektu(
+            project
+          );
+
+        };
+
+
+      tabs.appendChild(button);
+
+
+
+      /*
+        Automātiski atver pirmo projektu
+      */
+
+      if (index === 0) {
+
+        button.click();
+
+      }
+
+    });
+
+}
+
+
+
+/*
+  ================================
+  DISPLAY PROJECT
+  ================================
+*/
+
+
+function paraditProjektu(project) {
+
+  const data =
+    projectData[project];
+
+
+  const projectCard =
+    document.getElementById(
+      "projectCard"
+    );
+
+
+  const agentCard =
+    document.getElementById(
+      "agentCard"
+    );
+
+
+  projectCard.style.display =
+    "block";
+
+
+  agentCard.style.display =
+    "block";
+
+
+
+  document
+    .getElementById(
+      "projectTitle"
+    )
+    .textContent =
+      getProjectDisplayName(project);
+
+
+
+  /*
+    Nosakām projekta aprēķina veidu
+  */
+
+
+  const isBegin =
+    project
+      .toLowerCase()
+      .includes("begin_new");
+
+
+
+  let budgetIncome;
+
+  let resultValue;
+
+  let resultName;
+
+  let formulaText;
+
+
+
+  /*
+    BEGIN
+  */
+
+  if (isBegin) {
+
+
+    resultValue =
+      data.finished;
+
+
+    resultName =
+      "Finished";
+
+
+    budgetIncome =
+      data.finished *
+      BEGIN_FINISHED_PRICE;
+
+
+    formulaText =
+      data.finished.toFixed(0) +
+      " Finished × " +
+      BEGIN_FINISHED_PRICE.toFixed(2) +
+      " €";
+
+  }
+
+
+  /*
+    EXISTING
+  */
+
+  else {
+
+
+    resultValue =
+      data.commission;
+
+
+    resultName =
+      "Agent Commission";
+
+
+    budgetIncome =
+      data.commission *
+      EXISTING_PRICE;
+
+
+    formulaText =
+      data.commission.toFixed(0) +
+      " Agent Commission × " +
+      EXISTING_PRICE.toFixed(2) +
+      " €";
+
+  }
+
+
+
+  /*
+    INCOME RATE
+  */
+
+  const incomeRate =
+    data.logTime > 0
+      ? budgetIncome /
+        data.logTime
+      : 0;
+
+
+
+  /*
+    SUMMARY CARDS
+  */
+
+
+  document
+    .getElementById("summary")
+    .innerHTML = `
+
+
+      <div class="summary-grid">
+
+
+        <div class="summary-box">
+
+          <div class="summary-title">
+            Log Time
+          </div>
+
+          <div class="big">
+            ${data.logTime.toFixed(2)} h
+          </div>
+
+        </div>
+
+
+
+        <div class="summary-box">
+
+          <div class="summary-title">
+            ${resultName}
+          </div>
+
+          <div class="big">
+            ${resultValue.toFixed(0)}
+          </div>
+
+        </div>
+
+
+
+        <div class="summary-box">
+
+          <div class="summary-title">
+            Budget income
+          </div>
+
+          <div class="big">
+            ${budgetIncome.toFixed(2)} €
+          </div>
+
+        </div>
+
+
+
+        <div class="summary-box">
+
+          <div class="summary-title">
+            Ienākumu likme
+          </div>
+
+          <div class="big">
+            ${incomeRate.toFixed(2)} €/h
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="formula">
+
+        Aprēķins:
+        ${formulaText}
+
+      </div>
+
+    `;
+
+
+
+  /*
+    AGENT TABLE
+  */
+
+
+  const resultHeader =
+    document.getElementById(
+      "resultHeader"
+    );
+
+
+  resultHeader.textContent =
+    resultName;
+
+
+
+  const agentTable =
+    document.getElementById(
+      "agentTable"
+    );
+
+
+  agentTable.innerHTML = "";
+
+
+
+  Object
+    .entries(data.agents)
+
+    .sort(
+      (a, b) =>
+        b[1].logTime -
+        a[1].logTime
+    )
+
+    .forEach(
+      ([name, agent]) => {
+
+
+        let agentResult;
+
+        let agentIncome;
+
+
+        /*
+          BEGIN AGENT
+        */
+
+        if (isBegin) {
+
+
+          agentResult =
+            agent.finished;
+
+
+          agentIncome =
+            agent.finished *
+            BEGIN_FINISHED_PRICE;
+
+        }
+
+
+        /*
+          EXISTING AGENT
+        */
+
+        else {
+
+
+          agentResult =
+            agent.commission;
+
+
+          agentIncome =
+            agent.commission *
+            EXISTING_PRICE;
+
+        }
+
+
+
+        const agentIncomeRate =
+
+          agent.logTime > 0
+
+            ? agentIncome /
+              agent.logTime
+
+            : 0;
+
+
+
+        const row =
+          document
+            .createElement("tr");
+
+
+
+        row.innerHTML = `
+
+
+          <td>
+            ${name}
+          </td>
+
+
+          <td class="number">
+            ${agent.logTime.toFixed(2)} h
+          </td>
+
+
+          <td class="number">
+            ${agentResult.toFixed(0)}
+          </td>
+
+
+          <td class="number">
+            ${agentIncome.toFixed(2)} €
+          </td>
+
+
+          <td class="number">
+            <b>
+              ${agentIncomeRate.toFixed(2)} €/h
+            </b>
+          </td>
+
+        `;
+
+
+
+        agentTable
+          .appendChild(row);
+
+      });
+
+}
+
+
+
+/*
+  ================================
+  PROJECT DISPLAY NAME
+  ================================
+*/
+
+
+function getProjectDisplayName(project) {
+
+
+  if (
+    project ===
+    "Helvetia_Existing_2026_Rudens_LV"
+  ) {
+
+    return "Existing LV";
+
+  }
+
+
+  if (
+    project ===
+    "Helvetia_Existing_2026_Rudens_RU"
+  ) {
+
+    return "Existing RU";
+
+  }
+
+
+  if (
+    project === "Begin_NEW"
+  ) {
+
+    return "Begin NEW";
+
+  }
+
+
+  return project;
+
+}
+
+
+
+/*
+  ================================
+  HELPERS
+  ================================
+*/
+
+
+function parseNumber(value) {
+
+  const number =
+    Number(
+      String(value || "")
+        .replace(",", ".")
+        .replace("%", "")
+    );
+
+
+  return isNaN(number)
+    ? 0
+    : number;
+
+}
+
+
+
+function cleanValue(value) {
+
+  return value
+    .trim()
+    .replace(/^"|"$/g, "");
+
+}
+
+</script>
+
+</body>
+
+</html>
